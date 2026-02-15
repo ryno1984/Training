@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Knee Rehab V2 - Gym View</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #0f2233;
+      --muted: #51677b;
+      --line: #d5e0ea;
+      --accent: #0f5f96;
+      --accent-2: #1b8c62;
+      --warn: #9a5a18;
+      --danger: #a5332a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .wrap {
+      width: min(960px, 94vw);
+      margin: 14px auto 32px;
+    }
+
+    .top {
+      background: #113e61;
+      color: #f4fbff;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .top h1 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .top p {
+      margin: 6px 0 0;
+      color: #d8ecf8;
+      font-size: 0.95rem;
+    }
+
+    .strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+    }
+
+    .tabs {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      background: var(--bg);
+      padding: 8px 0;
+      margin-bottom: 10px;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--line);
+      background: #eef4f9;
+      border-radius: 10px;
+      padding: 9px 6px;
+      font-weight: 700;
+      color: #244760;
+      cursor: pointer;
+      font-size: 0.86rem;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .panel {
+      display: none;
+      gap: 10px;
+    }
+
+    .panel.active {
+      display: grid;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 1.02rem;
+      color: #154f79;
+    }
+
+    .small { color: var(--muted); font-size: 0.9rem; }
+
+    .callout {
+      border-left: 5px solid var(--accent);
+      background: #f7fbff;
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 0.9rem;
+    }
+
+    .callout.warn {
+      border-left-color: var(--warn);
+      background: #fff9f0;
+    }
+
+    .callout.danger {
+      border-left-color: var(--danger);
+      background: #fff4f3;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .exercise {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .exercise-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .exercise h3 {
+      margin: 0;
+      font-size: 0.96rem;
+      color: #0f3f60;
+    }
+
+    .rx {
+      margin: 0;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .video {
+      display: inline-block;
+      text-decoration: none;
+      background: #f0f7ff;
+      color: #155178;
+      border: 1px solid #bfd8eb;
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .done {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.84rem;
+      color: #1e4f3d;
+      font-weight: 700;
+      border: 1px dashed #8ac0a8;
+      background: #ecfaf3;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .done input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent-2);
+      margin: 0;
+    }
+
+    .sets {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .set-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 2px 6px;
+      background: #f9fcff;
+    }
+
+    .set-box input {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--accent);
+      margin: 0;
+    }
+
+    .how {
+      margin: 6px 0 0;
+      padding-left: 16px;
+      font-size: 0.88rem;
+    }
+
+    .how li { margin: 3px 0; }
+
+    .panel-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: #244760;
+      font-weight: 700;
+    }
+
+    .btn.warn {
+      background: #fff6e9;
+      border-color: #efcf9a;
+      color: #7c4e15;
+    }
+
+    .list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.9rem;
+    }
+
+    .list li { margin: 5px 0; }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #f1f5f9;
+      border: 1px solid #d9e4ed;
+      border-radius: 6px;
+      padding: 1px 5px;
+      font-size: 0.84rem;
+    }
+
+    .muted { color: var(--muted); }
+
+    .select-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .week-select {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 9px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .week-focus-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfdff;
+      padding: 8px 9px;
+      font-size: 0.88rem;
+    }
+
+    .kpi strong {
+      display: block;
+      color: #11486f;
+      font-size: 0.82rem;
+      margin-bottom: 3px;
+    }
+
+    .kpi .value {
+      font-weight: 700;
+      color: #17354d;
+    }
+
+    @media (max-width: 760px) {
+      .tabs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <h1>Knee Rehab V2 - Gym Session View</h1>
+      <p>Built for in-gym use: pick the day tab, follow exercises top-to-bottom, tick off each set.</p>
+      <div class="strip">
+        <span class="pill">Pain cap: 0-3/10</span>
+        <span class="pill">Cadence: 85-100 RPM</span>
+        <span class="pill">Deload every 4th week</span>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Workout day tabs">
+      <button class="tab-btn active" data-tab="overview">Overview</button>
+      <button class="tab-btn" data-tab="monday">Monday</button>
+      <button class="tab-btn" data-tab="wednesday">Wednesday</button>
+      <button class="tab-btn" data-tab="saturday">Saturday</button>
+      <button class="tab-btn" data-tab="vo2">VO2/Bike</button>
+    </nav>
+
+    <section class="panel active" id="overview">
+      <article class="card">
+        <h2>How To Use This In The Gym</h2>
+        <ol class="list">
+          <li>Open the correct day tab.</li>
+          <li>Each exercise shows exact sets/reps and 3 simple form steps.</li>
+          <li>Tap <strong>Video form check</strong> if you need visual confirmation.</li>
+          <li>Tick each set box as you finish. Then tick <strong>Done</strong> for the exercise.</li>
+          <li>If pain rises above 3/10 or sharp pain appears, stop and regress.</li>
+        </ol>
+      </article>
+
+      <article class="card">
+        <h2>This Week Focus</h2>
+        <p class="small">Choose your current week and the bike targets update automatically.</p>
+        <div class="select-row">
+          <label for="week-select"><strong>Current week:</strong></label>
+          <select id="week-select" class="week-select">
+            <option value="1">Week 1</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4 (Deload)</option>
+            <option value="5">Week 5</option>
+            <option value="6">Week 6</option>
+            <option value="7">Week 7</option>
+            <option value="8">Week 8 (Deload)</option>
+            <option value="9">Week 9</option>
+            <option value="10">Week 10</option>
+            <option value="11">Week 11</option>
+            <option value="12">Week 12 (Deload/Test)</option>
+          </select>
+        </div>
+        <div class="callout" style="margin-top:8px;">
+          <strong id="week-focus-title">Week 1 Focus</strong>
+          <div id="week-focus-text">Build consistency, smooth form, and symptom control.</div>
+        </div>
+        <div class="week-focus-grid">
+          <div class="kpi"><strong>VO2 interval prescription</strong><span class="value" id="week-vo2-prescription">4 x 2 min hard / 3 min easy</span></div>
+          <div class="kpi"><strong>Easy ride target</strong><span class="value" id="week-easy-target">90-110 W | 135-145 bpm | 85-95 RPM</span></div>
+          <div class="kpi"><strong>Tempo target</strong><span class="value" id="week-tempo-target">115-130 W | 150-158 bpm</span></div>
+          <div class="kpi"><strong>VO2 hard target</strong><span class="value" id="week-vo2-target">130-150 W | RPE 7-8 | 90-100 RPM</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Notation Decoder (No More Cryptic Terms)</h2>
+        <ul class="list">
+          <li><span class="mono">4 x 2 min</span> = 4 rounds of 2 minutes hard effort.</li>
+          <li><span class="mono">3 min recovery</span> = easy pedaling for 3 minutes between rounds.</li>
+          <li><span class="mono">Tempo</span> = steady hard pace you can hold continuously.</li>
+          <li><span class="mono">RPE 7-8</span> = hard but controlled, not all-out sprint.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Safety Rules</h2>
+        <div class="callout danger">
+          Stop if you get locking, giving-way, swelling increase, or sharp joint pain.
+        </div>
+        <div class="callout warn" style="margin-top:8px;">
+          If next-day knee pain/swelling is worse, reduce next session load/volume by 20-30%.
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Red Flag Check (30 Seconds Before You Train)</h2>
+        <div class="grid">
+          <label class="done"><input type="checkbox" data-key="redflag-swelling" /> Knee looks more swollen than yesterday</label>
+          <label class="done"><input type="checkbox" data-key="redflag-locking" /> Locking/catching/giving-way since last session</label>
+          <label class="done"><input type="checkbox" data-key="redflag-sharp" /> Sharp pain over 3/10 during warm-up</label>
+        </div>
+        <div class="callout warn" style="margin-top:8px;">
+          If any red flag is checked: skip hard work today. Do 15-25 min very easy spin (120-135 bpm), then reassess.
+        </div>
+      </article>
+    </section>
+
+    <section class="panel" id="monday">
+      <article class="card">
+        <h2>Monday - Strength A (Lower Body + Hip Stability)</h2>
+        <p class="small">Typical time: 50-65 min</p>
+        <div class="callout">
+          <strong>Optional easy bike after strength</strong><br />
+          20-30 min @ 135-145 bpm, cadence 85-95 RPM, target watts: <span id="mon-easy-target">90-110 W</span>, RPE 3-4.
+        </div>
+        <div class="callout warn" style="margin-top:8px;">
+          Skip optional bike if knee is irritated or any red flag is present.
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="grid">
+          <div class="exercise">
+            <div class="exercise-head">
+              <div>
+                <h3>Clamshell</h3>
+                <p class="rx">2 x 15 each side</p>
+              </div>
+            </div>
+            <ul class="how">
+              <li>Lie on side, knees bent, band above knees.</li>
+              <li>Keep pelvis still; open top knee slowly.</li>
+              <li>Pause 1 second, lower with control.</li>
+            </ul>
+            <div class="actions">
+              <a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=clamshell+exercise+physical+therapy+form">Video form check</a>
+              <div class="sets" data-ex="mon-clamshell" data-count="2"></div>
+              <label class="done"><input type="checkbox" data-key="mon-clamshell-done" />Done</label>
+            </div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Fire Hydrant</h3><p class="rx">2 x 12 each side</p></div></div>
+            <ul class="how"><li>Hands under shoulders, knees under hips.</li><li>Lift knee to side without rotating trunk.</li><li>Lower slowly and keep ribs down.</li></ul>
+            <div class="actions">
+              <a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=fire+hydrant+exercise+form">Video form check</a>
+              <div class="sets" data-ex="mon-firehydrant" data-count="2"></div>
+              <label class="done"><input type="checkbox" data-key="mon-firehydrant-done" />Done</label>
+            </div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Cat-Cow</h3><p class="rx">10 slow cycles</p></div></div>
+            <ul class="how"><li>Move spine through gentle flexion/extension.</li><li>Breathe slowly through each rep.</li><li>Stay in pain-free range.</li></ul>
+            <div class="actions">
+              <a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=cat+cow+exercise+form">Video form check</a>
+              <label class="done"><input type="checkbox" data-key="mon-catcow-done" />Done</label>
+            </div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Spanish Squat (Isometric)</h3><p class="rx">3 x 30-45 sec</p></div></div>
+            <ul class="how"><li>Band behind knees, anchor in front.</li><li>Sit back, torso upright, shins near vertical.</li><li>Hold and breathe; stop if pain exceeds 3/10.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=spanish+squat+isometric+form">Video form check</a><div class="sets" data-ex="mon-spanish" data-count="3"></div><label class="done"><input type="checkbox" data-key="mon-spanish-done" />Done</label></div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Single-Leg Glute Bridge</h3><p class="rx">3 x 10-12 each side</p></div></div>
+            <ul class="how"><li>Drive heel down on working leg.</li><li>Lift hips until shoulders-hips-knee align.</li><li>Keep pelvis level and lower slowly.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=single+leg+glute+bridge+form">Video form check</a><div class="sets" data-ex="mon-slbridge" data-count="3"></div><label class="done"><input type="checkbox" data-key="mon-slbridge-done" />Done</label></div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Lateral Band Walk</h3><p class="rx">3 x 12-15 steps each direction</p></div></div>
+            <ul class="how"><li>Small squat stance, tension on band.</li><li>Step sideways with feet parallel.</li><li>Do not let knees collapse inward.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=lateral+band+walk+form">Video form check</a><div class="sets" data-ex="mon-bandwalk" data-count="3"></div><label class="done"><input type="checkbox" data-key="mon-bandwalk-done" />Done</label></div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Split Squat</h3><p class="rx">3 x 8-10 each side</p></div></div>
+            <ul class="how"><li>Staggered stance, hold support if needed.</li><li>Lower straight down with controlled depth.</li><li>Knee tracks over 2nd toe (no valgus).</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=split+squat+proper+form">Video form check</a><div class="sets" data-ex="mon-splitsquat" data-count="3"></div><label class="done"><input type="checkbox" data-key="mon-splitsquat-done" />Done</label></div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Standing Hip Hiker</h3><p class="rx">3 x 12 each side</p></div></div>
+            <ul class="how"><li>Stand on one leg on small step.</li><li>Drop opposite hip slightly, then lift it.</li><li>Keep stance knee stable and controlled.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=hip+hike+exercise+form">Video form check</a><div class="sets" data-ex="mon-hiphiker" data-count="3"></div><label class="done"><input type="checkbox" data-key="mon-hiphiker-done" />Done</label></div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Side-Lying Hip Adduction</h3><p class="rx">2 x 12-15 each side</p></div></div>
+            <ul class="how"><li>Bottom leg straight, top leg in front.</li><li>Lift bottom leg, pause, lower slowly.</li><li>Keep trunk stable.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=side+lying+hip+adduction+form">Video form check</a><div class="sets" data-ex="mon-adduction" data-count="2"></div><label class="done"><input type="checkbox" data-key="mon-adduction-done" />Done</label></div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Seated Soleus Raise</h3><p class="rx">3 x 15-20</p></div></div>
+            <ul class="how"><li>Sit with knees at 90 degrees.</li><li>Lift heels high, pause briefly.</li><li>Lower under full control.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=seated+soleus+raise+exercise">Video form check</a><div class="sets" data-ex="mon-soleus" data-count="3"></div><label class="done"><input type="checkbox" data-key="mon-soleus-done" />Done</label></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card panel-footer">
+        <span class="small">Monday checklist is saved automatically on this phone/browser.</span>
+        <button class="btn warn" data-reset="mon-">Reset Monday checks</button>
+      </article>
+    </section>
+
+    <section class="panel" id="wednesday">
+      <article class="card">
+        <h2>Wednesday - Strength B (Upper Body + Core)</h2>
+        <p class="small">Typical time: 45-60 min</p>
+        <div class="callout">
+          <strong>Optional recovery spin after strength</strong><br />
+          15-20 min @ 130-140 bpm, cadence 85-95 RPM, target watts: <span id="wed-easy-target">85-105 W</span>, RPE 2-3.
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="grid">
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Arm Circles + Thoracic Rotations</h3><p class="rx">2 min total</p></div></div>
+            <ul class="how"><li>Move shoulders and upper back through controlled range.</li><li>Do not force end range.</li><li>Use this to warm trunk and shoulders.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=thoracic+rotation+mobility+exercise">Video form check</a><label class="done"><input type="checkbox" data-key="wed-warmup-done" />Done</label></div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Bird Dog</h3><p class="rx">2 x 10 each side</p></div></div>
+            <ul class="how"><li>Opposite arm/leg extend long.</li><li>Keep hips and ribcage square.</li><li>Pause briefly each rep.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=bird+dog+exercise+form">Video form check</a><div class="sets" data-ex="wed-birddog" data-count="2"></div><label class="done"><input type="checkbox" data-key="wed-birddog-done" />Done</label></div>
+          </div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Push-Up</h3><p class="rx">3 x 8-15</p></div></div><ul class="how"><li>Body in straight line.</li><li>Elbows about 45 degrees.</li><li>Use incline or knees if needed.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=push+up+proper+form">Video form check</a><div class="sets" data-ex="wed-pushup" data-count="3"></div><label class="done"><input type="checkbox" data-key="wed-pushup-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>TRX / Inverted Row</h3><p class="rx">3 x 10-12</p></div></div><ul class="how"><li>Keep body line straight.</li><li>Pull chest to handles/bar.</li><li>Lower under control.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=trx+row+form">Video form check</a><div class="sets" data-ex="wed-row" data-count="3"></div><label class="done"><input type="checkbox" data-key="wed-row-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Pallof Press</h3><p class="rx">3 x 10-12 each side</p></div></div><ul class="how"><li>Band/cable at chest height.</li><li>Press straight out, resist rotation.</li><li>Exhale while pressing.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=pallof+press+exercise+form">Video form check</a><div class="sets" data-ex="wed-pallof" data-count="3"></div><label class="done"><input type="checkbox" data-key="wed-pallof-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Overhead Press (DB/Band)</h3><p class="rx">3 x 8-10</p></div></div><ul class="how"><li>Brace core and glutes.</li><li>Press overhead without back arch.</li><li>Lower slowly.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=dumbbell+overhead+press+form">Video form check</a><div class="sets" data-ex="wed-ohp" data-count="3"></div><label class="done"><input type="checkbox" data-key="wed-ohp-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Suitcase Carry</h3><p class="rx">3 x 30-40 m each side</p></div></div><ul class="how"><li>Hold one heavy weight on one side.</li><li>Walk tall, no leaning.</li><li>Switch sides every set.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=suitcase+carry+form">Video form check</a><div class="sets" data-ex="wed-suitcase" data-count="3"></div><label class="done"><input type="checkbox" data-key="wed-suitcase-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Bear Plank</h3><p class="rx">2-3 rounds x 20-30 sec</p></div></div><ul class="how"><li>Knees hover just off floor.</li><li>Neutral spine.</li><li>Steady breathing.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=bear+plank+form">Video form check</a><div class="sets" data-ex="wed-bear" data-count="3"></div><label class="done"><input type="checkbox" data-key="wed-bear-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Side Plank (Short Lever)</h3><p class="rx">2-3 rounds x 20-30 sec each side</p></div></div><ul class="how"><li>Knees bent, elbow under shoulder.</li><li>Lift hips into straight line.</li><li>No trunk rotation.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=side+plank+knees+form">Video form check</a><div class="sets" data-ex="wed-sideplank" data-count="3"></div><label class="done"><input type="checkbox" data-key="wed-sideplank-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Stir-the-Pot</h3><p class="rx">2-3 rounds x 6-8 circles each direction</p></div></div><ul class="how"><li>Forearms on Swiss ball.</li><li>Small controlled circles.</li><li>Hips stay level.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=stir+the+pot+exercise+form">Video form check</a><div class="sets" data-ex="wed-stir" data-count="3"></div><label class="done"><input type="checkbox" data-key="wed-stir-done" />Done</label></div></div>
+        </div>
+      </article>
+
+      <article class="card panel-footer"><span class="small">Wednesday checklist is saved automatically.</span><button class="btn warn" data-reset="wed-">Reset Wednesday checks</button></article>
+    </section>
+
+    <section class="panel" id="saturday">
+      <article class="card">
+        <h2>Saturday - Strength C (Full Body Integration)</h2>
+        <p class="small">Typical time: 60-80 min | Optional easy bike after: 20-30 min</p>
+      </article>
+
+      <article class="card">
+        <div class="grid">
+          <div class="exercise"><div class="exercise-head"><div><h3>Hip Circles + Ankle Mobility</h3><p class="rx">3 min</p></div></div><ul class="how"><li>Controlled circles, no forcing range.</li><li>Keep posture upright.</li><li>Prepare ankles/hips before loading.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=ankle+mobility+exercise+for+squat">Video form check</a><label class="done"><input type="checkbox" data-key="sat-mobility-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Clamshell</h3><p class="rx">1 x 15 each side</p></div></div><ul class="how"><li>Band above knees, heels together.</li><li>Open knee without rolling pelvis.</li><li>Slow and controlled.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=clamshell+exercise+form">Video form check</a><label class="done"><input type="checkbox" data-key="sat-clamshell-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Box Squat</h3><p class="rx">3 x 8-10</p></div></div><ul class="how"><li>Start with higher box.</li><li>Sit back and touch box softly.</li><li>Stand with knees tracking over toes.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=box+squat+proper+form">Video form check</a><div class="sets" data-ex="sat-boxsquat" data-count="3"></div><label class="done"><input type="checkbox" data-key="sat-boxsquat-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Low Step-Up</h3><p class="rx">3 x 8-10 each side</p></div></div><ul class="how"><li>Full foot on step.</li><li>Drive through working leg.</li><li>Lower slowly (no drop).</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=step+up+exercise+form">Video form check</a><div class="sets" data-ex="sat-stepup" data-count="3"></div><label class="done"><input type="checkbox" data-key="sat-stepup-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Good Morning (Light)</h3><p class="rx">3 x 10-12</p></div></div><ul class="how"><li>Soft knees, neutral spine.</li><li>Hinge hips back.</li><li>Return tall using glutes/hamstrings.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=good+morning+exercise+form">Video form check</a><div class="sets" data-ex="sat-goodmorning" data-count="3"></div><label class="done"><input type="checkbox" data-key="sat-goodmorning-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Single-Leg RDL</h3><p class="rx">3 x 6-8 each side</p></div></div><ul class="how"><li>Use support if balance is limited.</li><li>Hinge from hips, keep pelvis square.</li><li>Move slow and controlled.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=single+leg+rdl+form">Video form check</a><div class="sets" data-ex="sat-slrdl" data-count="3"></div><label class="done"><input type="checkbox" data-key="sat-slrdl-done" />Done</label></div></div>
+
+          <div class="exercise"><div class="exercise-head"><div><h3>Farmer Carry</h3><p class="rx">3 x 40-50 m</p></div></div><ul class="how"><li>Weights in both hands.</li><li>Walk tall and steady.</li><li>Keep trunk braced.</li></ul><div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=farmer+carry+proper+form">Video form check</a><div class="sets" data-ex="sat-farmer" data-count="3"></div><label class="done"><input type="checkbox" data-key="sat-farmer-done" />Done</label></div></div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Wood Chop (Phase 2+ only)</h3><p class="rx">2-3 x 10 each side</p></div></div>
+            <ul class="how"><li>Use light band/cable first.</li><li>Rotate in control, no snap.</li><li>Skip if turning pain is flared.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=wood+chop+cable+exercise+form">Video form check</a><div class="sets" data-ex="sat-woodchop" data-count="3"></div><label class="done"><input type="checkbox" data-key="sat-woodchop-done" />Done</label></div>
+          </div>
+
+          <div class="exercise">
+            <div class="exercise-head"><div><h3>Lateral Step-Down + Small Pivot (Phase 3 only)</h3><p class="rx">2-3 x 6-8 each side</p></div></div>
+            <ul class="how"><li>Use very low step.</li><li>Add only tiny pivot if pain-free.</li><li>Stop immediately with sharp pain.</li></ul>
+            <div class="actions"><a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=lateral+step+down+exercise+form">Video form check</a><div class="sets" data-ex="sat-stepdownpivot" data-count="3"></div><label class="done"><input type="checkbox" data-key="sat-stepdownpivot-done" />Done</label></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card panel-footer"><span class="small">Saturday checklist is saved automatically.</span><button class="btn warn" data-reset="sat-">Reset Saturday checks</button></article>
+    </section>
+
+    <section class="panel" id="vo2">
+      <article class="card">
+        <h2>VO2 / Bike Tab (Step-by-Step)</h2>
+        <p class="small">Use this tab on Tuesday/Thursday/Sunday depending on plan day.</p>
+      </article>
+
+      <article class="card">
+        <h2>This Week Bike Targets</h2>
+        <div class="week-focus-grid">
+          <div class="kpi"><strong>Current week interval set</strong><span class="value" id="vo2-prescription-inline">4 x 2 min hard / 3 min easy</span></div>
+          <div class="kpi"><strong>VO2 hard watts this week</strong><span class="value" id="vo2-watts-inline">130-150 W</span></div>
+          <div class="kpi"><strong>Tempo watts this week</strong><span class="value" id="tempo-watts-inline">115-130 W</span></div>
+          <div class="kpi"><strong>Easy ride watts this week</strong><span class="value" id="easy-watts-inline">90-110 W</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Exact Meaning of Interval Notation</h2>
+        <ul class="list">
+          <li><span class="mono">4 x 2 min hard / 3 min easy</span> means:
+            <ul class="list">
+              <li>Round 1: 2 min hard + 3 min easy</li>
+              <li>Round 2: 2 min hard + 3 min easy</li>
+              <li>Round 3: 2 min hard + 3 min easy</li>
+              <li>Round 4: 2 min hard + 3 min easy</li>
+            </ul>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Thursday VO2 Session Template</h2>
+        <div class="callout">
+          <strong>Warm-up (10 min):</strong> easy spin 120-135 bpm, cadence 85-95.
+        </div>
+        <div class="callout" style="margin-top:8px;">
+          <strong>Main set:</strong> Follow your phase prescription:
+          <ul class="list">
+            <li>Week 1: 4 x 2 min hard, 3 min easy</li>
+            <li>Week 2: 4 x 3 min hard, 3 min easy</li>
+            <li>Week 3: 5 x 3 min hard, 3 min easy</li>
+            <li>Week 4 (deload): 3-4 x 2 min hard</li>
+            <li>Then progress as per phase table below.</li>
+          </ul>
+        </div>
+        <div class="callout" style="margin-top:8px;">
+          <strong>Cool-down (8-10 min):</strong> easy spin.
+        </div>
+        <p class="small">Hard = RPE 7-8 (not sprint), cadence 90-100 RPM, and watts from This Week Bike Targets. Heart rate may lag for first 30-90 sec.</p>
+      </article>
+
+      <article class="card">
+        <h2>Tempo Session (Usually Sunday)</h2>
+        <ul class="list">
+          <li>Warm-up 10 min easy.</li>
+          <li>Main: 12-25 min continuous at moderate-hard steady effort (phase dependent).</li>
+          <li>Target around 150-158 bpm when stable.</li>
+          <li>Cool-down 5-8 min easy.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Bike Progression Table</h2>
+        <ul class="list">
+          <li><strong>Weeks 1-4:</strong> 4x2 -> 4x3 -> 5x3 -> deload 3-4x2</li>
+          <li><strong>Weeks 5-8:</strong> 5x4 -> 5x4 -> 6x4 -> deload 4x3</li>
+          <li><strong>Weeks 9-12:</strong> 4x5 -> 5x5 -> 5x5 -> deload/test 3-4x4</li>
+        </ul>
+        <h3 style="margin:10px 0 6px; color:#11486f;">Wattage Context By Phase</h3>
+        <ul class="list">
+          <li><strong>Phase 1 (Weeks 1-4):</strong> Easy 90-110 W, Tempo 115-130 W, VO2 130-150 W</li>
+          <li><strong>Phase 2 (Weeks 5-8):</strong> Easy 100-125 W, Tempo 125-145 W, VO2 145-170 W</li>
+          <li><strong>Phase 3 (Weeks 9-12):</strong> Easy 110-140 W, Tempo 135-160 W, VO2 155-185 W</li>
+        </ul>
+        <p class="small">If pain or recovery worsens, reduce watts by 10-20% and keep cadence smooth.</p>
+      </article>
+
+      <article class="card">
+        <h2>Bike Setup Instructions (Quick Fit)</h2>
+        <ul class="list">
+          <li><strong>Seat height:</strong> heel on pedal at bottom should make leg nearly straight.</li>
+          <li><strong>Fore-aft:</strong> crank at 3 o'clock, kneecap over or slightly behind pedal axle.</li>
+          <li><strong>Handlebar height:</strong> level with seat or slightly higher while rehabbing.</li>
+          <li><strong>Cadence:</strong> hold 85-100 RPM; avoid grinding below 80 RPM.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Bike Form Quick Checks</h2>
+        <ul class="list">
+          <li>Knees track straight (not caving inward under load).</li>
+          <li>Upper body stays quiet and relaxed.</li>
+          <li>If knee pain starts, reduce resistance first, keep cadence smooth.</li>
+        </ul>
+        <div class="actions">
+          <a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=wattbike+bike+fit+seat+height">Bike fit video check</a>
+          <a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=vo2+max+bike+intervals+how+to">VO2 interval video check</a>
+          <a class="video" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=cycling+tempo+effort+explained">Tempo effort video check</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:10px;">
+      <h2>Global Controls</h2>
+      <div class="panel-footer">
+        <span class="small">All checkboxes are saved to this device/browser.</span>
+        <button class="btn warn" id="reset-all">Reset all checks</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      function createStore() {
+        var mem = {};
+        var enabled = false;
+        try {
+          var t = '__knee_v2_test__';
+          window.localStorage.setItem(t, '1');
+          window.localStorage.removeItem(t);
+          enabled = true;
+        } catch (e) {
+          enabled = false;
+        }
+        return {
+          get: function (key) {
+            if (enabled) {
+              try { return window.localStorage.getItem(key); } catch (e) {}
+            }
+            return Object.prototype.hasOwnProperty.call(mem, key) ? mem[key] : null;
+          },
+          set: function (key, value) {
+            if (enabled) {
+              try { window.localStorage.setItem(key, String(value)); return; } catch (e) {}
+            }
+            mem[key] = String(value);
+          },
+          remove: function (key) {
+            if (enabled) {
+              try { window.localStorage.removeItem(key); return; } catch (e) {}
+            }
+            delete mem[key];
+          }
+        };
+      }
+
+      var store = createStore();
+      var buttons = document.querySelectorAll('.tab-btn');
+      var panels = document.querySelectorAll('.panel');
+
+      function activate(tabId) {
+        var i;
+        for (i = 0; i < buttons.length; i += 1) {
+          buttons[i].classList.toggle('active', buttons[i].getAttribute('data-tab') === tabId);
+        }
+        for (i = 0; i < panels.length; i += 1) {
+          panels[i].classList.toggle('active', panels[i].id === tabId);
+        }
+        store.set('knee_v2_active_tab', tabId);
+      }
+
+      for (var b = 0; b < buttons.length; b += 1) {
+        (function (btn) {
+          btn.addEventListener('click', function () {
+            activate(btn.getAttribute('data-tab'));
+          });
+        })(buttons[b]);
+      }
+
+      var savedTab = store.get('knee_v2_active_tab');
+      if (savedTab && document.getElementById(savedTab)) {
+        activate(savedTab);
+      }
+
+      var weekData = {
+        '1': { phase: 'Phase 1', focus: 'Build consistency and symptom control. Keep all movements smooth.', vo2: '4 x 2 min hard / 3 min easy', easy: '90-110 W', tempo: '115-130 W', vo2w: '130-150 W' },
+        '2': { phase: 'Phase 1', focus: 'Maintain control and improve repeatability of sets/reps.', vo2: '4 x 3 min hard / 3 min easy', easy: '90-115 W', tempo: '115-130 W', vo2w: '130-155 W' },
+        '3': { phase: 'Phase 1', focus: 'Add one interval and keep knee response stable next day.', vo2: '5 x 3 min hard / 3 min easy', easy: '95-120 W', tempo: '120-135 W', vo2w: '135-160 W' },
+        '4': { phase: 'Phase 1 (Deload)', focus: 'Back off volume, keep technique quality high, recover.', vo2: '3-4 x 2 min hard / 3 min easy', easy: '90-110 W', tempo: '115-130 W', vo2w: '130-150 W' },
+        '5': { phase: 'Phase 2', focus: 'Increase capacity with longer intervals and controlled force.', vo2: '5 x 4 min hard / 3 min easy', easy: '100-125 W', tempo: '125-140 W', vo2w: '145-165 W' },
+        '6': { phase: 'Phase 2', focus: 'Hold quality at same volume; avoid chasing extra fatigue.', vo2: '5 x 4 min hard / 3 min easy', easy: '100-125 W', tempo: '125-145 W', vo2w: '145-170 W' },
+        '7': { phase: 'Phase 2', focus: 'Add one interval only if knee response remains calm.', vo2: '6 x 4 min hard / 3 min easy', easy: '105-130 W', tempo: '130-145 W', vo2w: '150-170 W' },
+        '8': { phase: 'Phase 2 (Deload)', focus: 'Reduce load, consolidate gains, restore freshness.', vo2: '4 x 3 min hard / 3 min easy', easy: '100-120 W', tempo: '125-140 W', vo2w: '145-165 W' },
+        '9': { phase: 'Phase 3', focus: 'Transition to longer hard efforts with stable form.', vo2: '4 x 5 min hard / 3 min easy', easy: '110-135 W', tempo: '135-155 W', vo2w: '155-175 W' },
+        '10': { phase: 'Phase 3', focus: 'Increase repeat volume while keeping cadence smooth.', vo2: '5 x 5 min hard / 3 min easy', easy: '110-140 W', tempo: '135-160 W', vo2w: '160-180 W' },
+        '11': { phase: 'Phase 3', focus: 'Peak workload week. Prioritize sleep and recovery.', vo2: '5 x 5 min hard / 3 min easy', easy: '110-140 W', tempo: '140-160 W', vo2w: '160-185 W' },
+        '12': { phase: 'Phase 3 (Deload/Test)', focus: 'Reduce fatigue and verify progress without flare-ups.', vo2: '3-4 x 4 min hard / 3 min easy', easy: '105-130 W', tempo: '130-150 W', vo2w: '150-170 W' }
+      };
+
+      function setText(id, value) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      function updateWeekUI(weekNum) {
+        var key = String(weekNum);
+        var wk = weekData[key] || weekData['1'];
+        setText('week-focus-title', 'Week ' + weekNum + ' Focus (' + wk.phase + ')');
+        setText('week-focus-text', wk.focus);
+        setText('week-vo2-prescription', wk.vo2);
+        setText('week-easy-target', wk.easy + ' | 135-145 bpm | 85-95 RPM');
+        setText('week-tempo-target', wk.tempo + ' | 150-158 bpm');
+        setText('week-vo2-target', wk.vo2w + ' | RPE 7-8 | 90-100 RPM');
+
+        setText('mon-easy-target', wk.easy);
+        setText('wed-easy-target', wk.easy);
+
+        setText('vo2-prescription-inline', wk.vo2);
+        setText('vo2-watts-inline', wk.vo2w);
+        setText('tempo-watts-inline', wk.tempo);
+        setText('easy-watts-inline', wk.easy);
+      }
+
+      var weekSelect = document.getElementById('week-select');
+      if (weekSelect) {
+        var storedWeek = store.get('knee_v2_week');
+        var initialWeek = (storedWeek && weekData[storedWeek]) ? storedWeek : '1';
+        weekSelect.value = initialWeek;
+        updateWeekUI(parseInt(initialWeek, 10));
+        weekSelect.addEventListener('change', function () {
+          store.set('knee_v2_week', weekSelect.value);
+          updateWeekUI(parseInt(weekSelect.value, 10));
+        });
+      }
+
+      var allInputs = document.querySelectorAll('input[type="checkbox"][data-key]');
+      for (var i = 0; i < allInputs.length; i += 1) {
+        (function (input) {
+          var k = 'knee_v2_' + input.getAttribute('data-key');
+          input.checked = store.get(k) === '1';
+          input.addEventListener('change', function () {
+            store.set(k, input.checked ? '1' : '0');
+          });
+        })(allInputs[i]);
+      }
+
+      var setContainers = document.querySelectorAll('.sets[data-ex][data-count]');
+      for (var c = 0; c < setContainers.length; c += 1) {
+        (function (container) {
+          var ex = container.getAttribute('data-ex');
+          var count = parseInt(container.getAttribute('data-count'), 10);
+          var label = document.createElement('span');
+          label.textContent = 'Sets:';
+          container.appendChild(label);
+          for (var s = 1; s <= count; s += 1) {
+            var wrap = document.createElement('label');
+            wrap.className = 'set-box';
+            var box = document.createElement('input');
+            box.type = 'checkbox';
+            box.setAttribute('data-key', ex + '-set' + s);
+            var key = 'knee_v2_' + box.getAttribute('data-key');
+            box.checked = store.get(key) === '1';
+            box.addEventListener('change', (function (cb, storeKey) {
+              return function () {
+                store.set(storeKey, cb.checked ? '1' : '0');
+              };
+            })(box, key));
+            var txt = document.createElement('span');
+            txt.textContent = String(s);
+            wrap.appendChild(box);
+            wrap.appendChild(txt);
+            container.appendChild(wrap);
+          }
+        })(setContainers[c]);
+      }
+
+      var resetButtons = document.querySelectorAll('button[data-reset]');
+      for (var r = 0; r < resetButtons.length; r += 1) {
+        (function (btn) {
+          btn.addEventListener('click', function () {
+            var prefix = btn.getAttribute('data-reset');
+            var boxes = document.querySelectorAll('input[type="checkbox"]');
+            for (var j = 0; j < boxes.length; j += 1) {
+              var key = boxes[j].getAttribute('data-key');
+              if (!key) continue;
+              if (key.indexOf(prefix) === 0) {
+                boxes[j].checked = false;
+                store.remove('knee_v2_' + key);
+              }
+            }
+          });
+        })(resetButtons[r]);
+      }
+
+      var resetAll = document.getElementById('reset-all');
+      if (resetAll) {
+        resetAll.addEventListener('click', function () {
+          var boxes = document.querySelectorAll('input[type="checkbox"]');
+          for (var j = 0; j < boxes.length; j += 1) {
+            var key = boxes[j].getAttribute('data-key');
+            if (!key) continue;
+            boxes[j].checked = false;
+            store.remove('knee_v2_' + key);
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
